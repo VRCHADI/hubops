@@ -3,7 +3,7 @@ package com.gft.hubops.domain.model.entrega;
 import com.gft.hubops.domain.model.cotacao.Cotacao;
 import jakarta.persistence.*;
 import lombok.*;
-
+import com.gft.hubops.domain.model.cliente.Cliente;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,8 +22,9 @@ public class Entrega {
     @Column(nullable = false, length = 40)
     private String codigoRastreamento;
 
-    @Column(nullable = false, length = 40)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private StatusEntrega status;
 
     @Column(nullable = false)
     private LocalDateTime criadaEm;
@@ -31,4 +32,9 @@ public class Entrega {
     @OneToOne
     @JoinColumn(name = "cotacao_id")
     private Cotacao cotacao;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
+
 }
