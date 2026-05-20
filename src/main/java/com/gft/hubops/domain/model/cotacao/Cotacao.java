@@ -32,10 +32,16 @@ public class Cotacao {
     @Column(nullable = false)
     private Integer prazoDias;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private StatusCotacao status;
     private LocalDateTime criadaEm;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
+
+    @Column(nullable = false)
+    private Double pesoKg;
+
 }
