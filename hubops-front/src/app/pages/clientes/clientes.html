@@ -1,0 +1,16 @@
+<div class="clientes-page">
+
+  <div class="topbar">
+    <h1>Clientes</h1>
+    <p>Gerencie os clientes cadastrados no HubOps.</p>
+  </div>
+
+  <div class="clientes-grid">
+    <div class="cliente-card" *ngFor="let cliente of clientes">
+      <strong>{{ cliente.nome }}</strong>
+      <span>{{ cliente.email }}</span>
+      <small>Documento: {{ cliente.documento }}</small>
+    </div>
+  </div>
+
+</div>

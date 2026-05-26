@@ -1,0 +1,141 @@
+.dashboard-layout {
+  min-height: 100vh;
+  display: flex;
+  background: #f1f5f9;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  width: 260px;
+  padding: 28px;
+  background: linear-gradient(180deg, #0f172a, #1e293b);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.4s ease;
+}
+
+.sidebar h2 {
+  margin: 0 0 36px;
+  font-size: 28px;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar a {
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.sidebar a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: translateX(4px);
+}
+
+.sidebar button {
+  margin-top: auto;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #ef4444;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.sidebar button:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.content {
+  flex: 1;
+  padding: 40px;
+  animation: fadeIn 0.5s ease;
+}
+
+.content h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 36px;
+}
+
+.content p {
+  color: #64748b;
+  font-size: 18px;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  margin-top: 32px;
+}
+
+.cliente-lista {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.cliente-card {
+  padding: 18px;
+  border-radius: 18px;
+  background: white;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: 0.2s;
+  animation: fadeIn 0.4s ease;
+}
+
+.cliente-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+}
+
+.cliente-card strong {
+  color: #0f172a;
+  font-size: 18px;
+}
+
+.cliente-card span {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.cliente-card small {
+  color: #64748b;
+}

@@ -1,0 +1,35 @@
+<div class="dashboard-layout">
+
+  <aside class="sidebar">
+    <h2>HubOps</h2>
+
+    <nav>
+      <a>Dashboard</a>
+      <a>Clientes</a>
+      <a>Cotações</a>
+      <a>Entregas</a>
+    </nav>
+
+    <button (click)="sair()">Sair</button>
+  </aside>
+
+  <main class="content">
+    <h1>Dashboard</h1>
+
+    <p>Bem-vindo ao sistema HubOps.</p>
+
+    <section class="card">
+  <h2>Clientes cadastrados</h2>
+
+  <div class="cliente-lista">
+    <div class="cliente-card" *ngFor="let cliente of clientes">
+      <strong>{{ cliente.nome }}</strong>
+      <span>{{ cliente.email }}</span>
+      <small>Documento: {{ cliente.documento }}</small>
+    </div>
+  </div>
+</section>
+
+  </main>
+
+</div>
