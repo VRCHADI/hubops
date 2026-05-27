@@ -4,11 +4,11 @@
     <h2>HubOps</h2>
 
     <nav>
-      <a>Dashboard</a>
-      <a>Clientes</a>
-      <a>Cotações</a>
-      <a>Entregas</a>
-    </nav>
+  <a routerLink="/dashboard">Dashboard</a>
+  <a routerLink="/clientes">Clientes</a>
+  <a routerLink="/cotacoes">Cotações</a>
+  <a routerLink="/entregas">Entregas</a>
+</nav>
 
     <button (click)="sair()">Sair</button>
   </aside>
@@ -21,15 +21,17 @@
     <section class="card">
   <h2>Clientes cadastrados</h2>
 
-  <div class="cliente-lista">
-    <div class="cliente-card" *ngFor="let cliente of clientes">
-      <strong>{{ cliente.nome }}</strong>
-      <span>{{ cliente.email }}</span>
-      <small>Documento: {{ cliente.documento }}</small>
-    </div>
-  </div>
-</section>
 
-  </main>
+<div class="cliente-lista">
+
+  <div class="cliente-card" *ngFor="let cliente of clientes">
+    <strong>{{ cliente.nome }}</strong>
+
+    <span>{{ cliente.email }}</span>
+
+    <small>
+      Documento: {{ cliente.documento }}
+    </small>
+  </div>
 
 </div>

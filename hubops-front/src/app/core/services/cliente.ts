@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+export interface ClienteRequest {
+  nome: string;
+  email: string;
+  documento: string;
+}
+
 export interface ClienteResponse {
   id: number;
   nome: string;
@@ -20,6 +26,10 @@ export class Cliente {
 
   listar() {
     return this.http.get<ClienteResponse[]>(this.apiUrl);
+  }
+
+  cadastrar(cliente: ClienteRequest) {
+    return this.http.post<ClienteResponse>(this.apiUrl, cliente);
   }
 
 }

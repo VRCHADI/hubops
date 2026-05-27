@@ -1,16 +1,67 @@
-<div class="clientes-page">
+<div class="clientes-layout">
 
-  <div class="topbar">
-    <h1>Clientes</h1>
-    <p>Gerencie os clientes cadastrados no HubOps.</p>
-  </div>
+  <aside class="sidebar">
+    <h2>HubOps</h2>
 
-  <div class="clientes-grid">
-    <div class="cliente-card" *ngFor="let cliente of clientes">
-      <strong>{{ cliente.nome }}</strong>
-      <span>{{ cliente.email }}</span>
-      <small>Documento: {{ cliente.documento }}</small>
+    <nav>
+  <a routerLink="/dashboard">Dashboard</a>
+  <a routerLink="/clientes">Clientes</a>
+  <a routerLink="/cotacoes">Cotações</a>
+  <a routerLink="/entregas">Entregas</a>
+</nav>
+
+    <button (click)="sair()">Sair</button>
+  </aside>
+
+  <main class="clientes-page">
+
+    <div class="topbar">
+      <h1>Clientes</h1>
+      <p>Gerencie os clientes cadastrados no HubOps.</p>
     </div>
-  </div>
+
+    <div class="form-card">
+
+      <h2>Novo Cliente</h2>
+
+      <div class="form-grid">
+
+        <input
+          type="text"
+          placeholder="Nome"
+          [(ngModel)]="novoCliente.nome"
+        />
+
+        <input
+          type="email"
+          placeholder="E-mail"
+          [(ngModel)]="novoCliente.email"
+        />
+
+        <input
+          type="text"
+          placeholder="Documento"
+          [(ngModel)]="novoCliente.documento"
+        />
+
+      </div>
+
+      <button (click)="cadastrarCliente()">
+        Cadastrar Cliente
+      </button>
+
+    </div>
+
+    <div class="clientes-grid">
+
+      <div class="cliente-card" *ngFor="let cliente of clientes">
+        <strong>{{ cliente.nome }}</strong>
+        <span>{{ cliente.email }}</span>
+        <small>Documento: {{ cliente.documento }}</small>
+      </div>
+
+    </div>
+
+  </main>
 
 </div>

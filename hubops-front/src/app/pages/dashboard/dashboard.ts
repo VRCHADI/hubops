@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Cliente, ClienteResponse } from '../../core/services/cliente';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { Cliente, ClienteResponse } from '../../core/services/cliente';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -23,17 +23,16 @@ export class Dashboard implements OnInit {
   }
 
   carregarClientes() {
-    this.clienteService.listar()
-      .subscribe({
-        next: (response) => {
-          this.clientes = response;
-          console.log(response);
-        },
-        error: (error) => {
-          console.error(error);
-        }
-      });
-  }
+  this.clienteService.listar()
+    .subscribe({
+      next: (response) => {
+        this.clientes = response;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+}
 
   sair() {
     localStorage.removeItem('token');
