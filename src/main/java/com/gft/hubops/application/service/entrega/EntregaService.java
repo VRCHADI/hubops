@@ -16,6 +16,8 @@ import com.gft.hubops.adapters.in.web.entrega.dto.AtualizarStatusEntregaRequest;
 import java.util.List;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import com.gft.hubops.adapters.out.messaging.kafka.EntregaKafkaProducer;
+import com.gft.hubops.adapters.out.messaging.kafka.dto.EntregaEvento;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class EntregaService {
     private final EntregaRepository entregaRepository;
     private final ClienteRepository clienteRepository;
     private final CotacaoRepository cotacaoRepository;
+    private final EntregaKafkaProducer entregaKafkaProducer;
 
     public EntregaResponse criar(Long clienteId, EntregaRequest request) {
 
@@ -50,6 +53,16 @@ public class EntregaService {
                 .build();
 
         Entrega entregaSalva = entregaRepository.save(entrega);
+
+        entregaKafkaProducer.publicar(new EntregaEvento(
+                entregaSalva.getId(),
+                entregaSalva.getCodigoRastreamento(),
+                entregaSalva.getStatus(),
+                entregaSalva.getCotacao().getId(),
+                entregaSalva.getCliente().getId(),
+                "ENTREGA_CRIADA",
+                LocalDateTime.now()
+        ));
 
         return new EntregaResponse(
                 entregaSalva.getId(),
@@ -93,6 +106,16 @@ public class EntregaService {
         entrega.setStatus(request.status());
 
         Entrega entregaAtualizada = entregaRepository.save(entrega);
+
+        entregaKafkaProducer.publicar(new EntregaEvento(
+                entregaAtualizada.getId(),
+                entregaAtualizada.getCodigoRastreamento(),
+                entregaAtualizada.getStatus(),
+                entregaAtualizada.getCotacao().getId(),
+                entregaAtualizada.getCliente().getId(),
+                "STATUS_ENTREGA_ATUALIZADO",
+                LocalDateTime.now()
+        ));
 
         return new EntregaResponse(
                 entregaAtualizada.getId(),
@@ -170,6 +193,16 @@ public class EntregaService {
         entrega.setStatus(StatusEntrega.CANCELADA);
 
         Entrega entregaCancelada = entregaRepository.save(entrega);
+
+        entregaKafkaProducer.publicar(new EntregaEvento(
+                entregaCancelada.getId(),
+                entregaCancelada.getCodigoRastreamento(),
+                entregaCancelada.getStatus(),
+                entregaCancelada.getCotacao().getId(),
+                entregaCancelada.getCliente().getId(),
+                "ENTREGA_CANCELADA",
+                LocalDateTime.now()
+        ));
 
         return new EntregaResponse(
                 entregaCancelada.getId(),
