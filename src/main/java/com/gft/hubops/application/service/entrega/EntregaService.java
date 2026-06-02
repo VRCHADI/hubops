@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import com.gft.hubops.adapters.out.messaging.kafka.EntregaKafkaProducer;
 import com.gft.hubops.adapters.out.messaging.kafka.dto.EntregaEvento;
+import com.gft.hubops.adapters.in.web.entrega.dto.EntregaPorStatusResponse;
+import com.gft.hubops.adapters.out.persistence.entrega.EntregaJdbcRepository;
+
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class EntregaService {
     private final ClienteRepository clienteRepository;
     private final CotacaoRepository cotacaoRepository;
     private final EntregaKafkaProducer entregaKafkaProducer;
+    private final EntregaJdbcRepository entregaJdbcRepository;
 
     public EntregaResponse criar(Long clienteId, EntregaRequest request) {
 
@@ -212,6 +216,10 @@ public class EntregaService {
                 entregaCancelada.getCotacao().getId(),
                 entregaCancelada.getCliente().getId()
         );
+    }
+
+    public List<EntregaPorStatusResponse> contarEntregasPorStatus() {
+        return entregaJdbcRepository.contarEntregasPorStatus();
     }
 
 }

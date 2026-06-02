@@ -10,11 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.gft.hubops.adapters.in.web.entrega.dto.AtualizarStatusEntregaRequest;
 import java.util.List;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import com.gft.hubops.adapters.in.web.entrega.dto.EntregaPorStatusResponse;
+
 
 @RestController
 @RequestMapping("/api/clientes/{clienteId}/entregas")
@@ -96,6 +97,13 @@ public class EntregaController {
             @PathVariable @Positive(message = "O ID da entrega deve ser um número positivo.") Long entregaId
     ) {
         return entregaService.cancelar(clienteId, entregaId);
+    }
+
+    @Operation(summary = "Relatório de entregas por status", description = "Retorna a quantidade de entregas agrupadas por status usando JDBC Template.")
+    @ApiResponse(responseCode = "200", description = "Relatório retornado com sucesso.")
+    @GetMapping("/relatorios/por-status")
+    public List<EntregaPorStatusResponse> contarEntregasPorStatus() {
+        return entregaService.contarEntregasPorStatus();
     }
 
 }
