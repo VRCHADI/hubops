@@ -21,6 +21,8 @@ import com.gft.hubops.adapters.out.messaging.kafka.dto.EntregaEvento;
 import com.gft.hubops.adapters.in.web.entrega.dto.EntregaPorStatusResponse;
 import com.gft.hubops.adapters.out.persistence.entrega.EntregaJdbcRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 
 
 @Service
@@ -34,6 +36,7 @@ public class EntregaService {
     private final EntregaKafkaProducer entregaKafkaProducer;
     private final EntregaJdbcRepository entregaJdbcRepository;
 
+    @CacheEvict(value = "relatorioEntregasPorStatus", allEntries = true)
     public EntregaResponse criar(Long clienteId, EntregaRequest request) {
 
         Cliente cliente = clienteRepository.findById(clienteId)
@@ -92,6 +95,7 @@ public class EntregaService {
         return "HUB-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
+    @CacheEvict(value = "relatorioEntregasPorStatus", allEntries = true)
     public EntregaResponse atualizarStatus(
             Long clienteId,
             Long entregaId,
@@ -193,6 +197,7 @@ public class EntregaService {
         );
     }
 
+    @CacheEvict(value = "relatorioEntregasPorStatus", allEntries = true)
     public EntregaResponse cancelar(Long clienteId, Long entregaId) {
 
         if (!clienteRepository.existsById(clienteId)) {
@@ -246,8 +251,8 @@ public class EntregaService {
         );
     }
 
+    @Cacheable("relatorioEntregasPorStatus")
     public List<EntregaPorStatusResponse> contarEntregasPorStatus() {
         return entregaJdbcRepository.contarEntregasPorStatus();
     }
-
 }
