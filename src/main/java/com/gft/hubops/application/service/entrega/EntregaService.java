@@ -20,10 +20,12 @@ import com.gft.hubops.adapters.out.messaging.kafka.EntregaKafkaProducer;
 import com.gft.hubops.adapters.out.messaging.kafka.dto.EntregaEvento;
 import com.gft.hubops.adapters.in.web.entrega.dto.EntregaPorStatusResponse;
 import com.gft.hubops.adapters.out.persistence.entrega.EntregaJdbcRepository;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EntregaService {
 
     private final EntregaRepository entregaRepository;
@@ -57,6 +59,14 @@ public class EntregaService {
                 .build();
 
         Entrega entregaSalva = entregaRepository.save(entrega);
+
+        log.info(
+                "Entrega criada | entregaId={} | clienteId={} | cotacaoId={} | status={}",
+                entregaSalva.getId(),
+                entregaSalva.getCliente().getId(),
+                entregaSalva.getCotacao().getId(),
+                entregaSalva.getStatus()
+        );
 
         entregaKafkaProducer.publicar(new EntregaEvento(
                 entregaSalva.getId(),
@@ -107,9 +117,19 @@ public class EntregaService {
             throw new RuntimeException("Entrega cancelada não pode ter status alterado.");
         }
 
+        StatusEntrega statusAnterior = entrega.getStatus();
+
         entrega.setStatus(request.status());
 
         Entrega entregaAtualizada = entregaRepository.save(entrega);
+
+        log.info(
+                "Status da entrega atualizado | entregaId={} | clienteId={} | statusAnterior={} | statusNovo={}",
+                entregaAtualizada.getId(),
+                entregaAtualizada.getCliente().getId(),
+                statusAnterior,
+                entregaAtualizada.getStatus()
+        );
 
         entregaKafkaProducer.publicar(new EntregaEvento(
                 entregaAtualizada.getId(),
@@ -197,6 +217,14 @@ public class EntregaService {
         entrega.setStatus(StatusEntrega.CANCELADA);
 
         Entrega entregaCancelada = entregaRepository.save(entrega);
+
+        log.info(
+                "Entrega cancelada | entregaId={} | clienteId={} | cotacaoId={} | status={}",
+                entregaCancelada.getId(),
+                entregaCancelada.getCliente().getId(),
+                entregaCancelada.getCotacao().getId(),
+                entregaCancelada.getStatus()
+        );
 
         entregaKafkaProducer.publicar(new EntregaEvento(
                 entregaCancelada.getId(),
