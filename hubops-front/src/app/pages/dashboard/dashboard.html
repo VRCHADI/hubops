@@ -1,37 +1,139 @@
-<div class="dashboard-layout">
+<section class="dashboard-page">
 
-  <aside class="sidebar">
-    <h2>HubOps</h2>
+  <div class="dashboard-header">
+    <div>
+      <h1>Dashboard Operacional</h1>
+      <p>Visão executiva dos indicadores do HubOps.</p>
+    </div>
 
-    <nav>
-  <a routerLink="/dashboard">Dashboard</a>
-  <a routerLink="/clientes">Clientes</a>
-  <a routerLink="/cotacoes">Cotações</a>
-  <a routerLink="/entregas">Entregas</a>
-</nav>
-
-    <button (click)="sair()">Sair</button>
-  </aside>
-
-  <main class="content">
-    <h1>Dashboard</h1>
-
-    <p>Bem-vindo ao sistema HubOps.</p>
-
-    <section class="card">
-  <h2>Clientes cadastrados</h2>
-
-
-<div class="cliente-lista">
-
-  <div class="cliente-card" *ngFor="let cliente of clientes">
-    <strong>{{ cliente.nome }}</strong>
-
-    <span>{{ cliente.email }}</span>
-
-    <small>
-      Documento: {{ cliente.documento }}
-    </small>
+    <div class="header-badge">
+      <span></span>
+      Operação em tempo real
+    </div>
   </div>
 
-</div>
+  <p *ngIf="carregando()">Carregando indicadores...</p>
+
+  <p *ngIf="erro()">
+    {{ erro() }}
+  </p>
+
+  <div class="kpi-grid" *ngIf="!carregando() && !erro()">
+
+    <div class="kpi-card">
+      <span>Clientes</span>
+      <strong>{{ totalClientes() }}</strong>
+      <small>Base operacional</small>
+    </div>
+
+    <div class="kpi-card">
+      <span>Cotações</span>
+      <strong>{{ totalCotacoes() }}</strong>
+      <small>Fretes simulados</small>
+    </div>
+
+    <div class="kpi-card">
+      <span>Entregas</span>
+      <strong>{{ totalEntregas() }}</strong>
+      <small>Operações criadas</small>
+    </div>
+
+    <div class="kpi-card success">
+      <span>Entregues</span>
+      <strong>{{ entregasEntregues() }}</strong>
+      <small>Finalizadas com sucesso</small>
+    </div>
+
+  </div>
+
+  <div class="main-dashboard-grid" *ngIf="!carregando() && !erro()">
+
+    <section class="panel chart-panel">
+      <h2>Status das Entregas</h2>
+      <p>Distribuição operacional por etapa.</p>
+
+      <div class="column-chart">
+
+        <div class="chart-column">
+          <strong>{{ entregasPendentes() }}</strong>
+          <div class="column-track">
+            <div class="column-fill pending" [style.height.%]="percentualPendentes()"></div>
+          </div>
+          <span>Pendentes</span>
+          <small>{{ percentualPendentes() }}%</small>
+        </div>
+
+        <div class="chart-column">
+          <strong>{{ entregasEmTransito() }}</strong>
+          <div class="column-track">
+            <div class="column-fill transit" [style.height.%]="percentualEmTransito()"></div>
+          </div>
+          <span>Em trânsito</span>
+          <small>{{ percentualEmTransito() }}%</small>
+        </div>
+
+        <div class="chart-column">
+          <strong>{{ entregasEntregues() }}</strong>
+          <div class="column-track">
+            <div class="column-fill delivered" [style.height.%]="percentualEntregues()"></div>
+          </div>
+          <span>Entregues</span>
+          <small>{{ percentualEntregues() }}%</small>
+        </div>
+
+        <div class="chart-column">
+          <strong>{{ entregasCanceladas() }}</strong>
+          <div class="column-track">
+            <div class="column-fill canceled" [style.height.%]="percentualCanceladas()"></div>
+          </div>
+          <span>Canceladas</span>
+          <small>{{ percentualCanceladas() }}%</small>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="panel performance-panel">
+      <h2>Performance Operacional</h2>
+
+      <div class="performance-content">
+        <div class="donut-ring" [style.--percent]="percentualEntregues()">
+          <span>{{ percentualEntregues() }}%</span>
+          <small>Taxa de sucesso</small>
+        </div>
+
+        <div class="performance-info">
+          <strong>{{ entregasEntregues() }}</strong>
+          <span>entregas concluídas</span>
+
+          <strong>{{ totalEntregas() }}</strong>
+          <span>entregas totais</span>
+        </div>
+      </div>
+
+      <div class="performance-track">
+        <div class="performance-fill" [style.width.%]="percentualEntregues()"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <section class="panel timeline-panel" *ngIf="!carregando() && !erro()">
+    <h2>Últimas Movimentações</h2>
+
+    <div class="timeline-list" *ngIf="ultimasEntregas().length > 0">
+
+      <div class="timeline-item" *ngFor="let entrega of ultimasEntregas()">
+        <strong>Entrega #{{ entrega.id }}</strong>
+        <span>{{ entrega.status }}</span>
+        <small>Cotação {{ entrega.cotacaoId }} • Cliente {{ entrega.clienteId }}</small>
+      </div>
+
+    </div>
+
+    <p *ngIf="ultimasEntregas().length === 0">
+      Nenhuma movimentação encontrada.
+    </p>
+  </section>
+
+</section>

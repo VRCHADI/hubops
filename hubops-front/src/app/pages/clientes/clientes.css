@@ -1,68 +1,4 @@
-.clientes-layout {
-  min-height: 100vh;
-  display: flex;
-  background: #f1f5f9;
-  font-family: Arial, sans-serif;
-}
-
-.sidebar {
-  width: 260px;
-  padding: 28px;
-  background: linear-gradient(180deg, #0f172a, #1e293b);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  animation: slideIn 0.4s ease;
-}
-
-.sidebar h2 {
-  margin: 0 0 36px;
-  font-size: 28px;
-  color: white;
-}
-
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.sidebar a {
-  display: block;
-  padding: 12px 14px;
-  border-radius: 12px;
-  color: #cbd5e1;
-  cursor: pointer;
-  text-decoration: none;
-  transition: 0.2s;
-}
-
-.sidebar a:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  transform: translateX(4px);
-}
-
-.sidebar button {
-  margin-top: auto;
-  padding: 12px;
-  border: none;
-  border-radius: 12px;
-  background: #ef4444;
-  color: white;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.sidebar button:hover {
-  background: #dc2626;
-  transform: translateY(-1px);
-}
-
 .clientes-page {
-  flex: 1;
-  padding: 40px;
   animation: fadeIn 0.5s ease;
 }
 
@@ -164,18 +100,6 @@
 
 .cliente-card small {
   color: #64748b;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-24px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
 }
 
 @keyframes fadeIn {

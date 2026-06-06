@@ -1,21 +1,38 @@
 <div class="login-container">
+
+  <div class="login-brand">
+
+  <img
+    src="assets/images/hubops-logo.png"
+    alt="HubOps"
+  />
+
+  <p>Sistema de Operações Logísticas</p>
+
+</div>
+
   <div class="login-card">
-    <h1>HubOps</h1>
-    <p>Acesse sua conta para continuar</p>
 
     <label>E-mail</label>
+
     <input
-  type="email"
-  placeholder="Digite seu e-mail"
-  [(ngModel)]="email"
-/>
+      type="email"
+      placeholder="Digite seu e-mail"
+      [(ngModel)]="email"
+    />
 
     <label>Senha</label>
+
     <input
-  type="password"
-  placeholder="Digite sua senha"
-  [(ngModel)]="senha"
-/>
-    <button (click)="entrar()">Entrar</button>
+      type="password"
+      placeholder="Digite sua senha"
+      [(ngModel)]="senha"
+    />
+
+    <button (click)="entrar()">
+      Entrar
+    </button>
+
   </div>
+
 </div>

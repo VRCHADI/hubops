@@ -1,67 +1,56 @@
-<div class="clientes-layout">
+<section class="clientes-page">
 
-  <aside class="sidebar">
-    <h2>HubOps</h2>
+  <div class="topbar">
+    <h1>Clientes</h1>
+    <p>Gerencie os clientes cadastrados no HubOps.</p>
+  </div>
 
-    <nav>
-  <a routerLink="/dashboard">Dashboard</a>
-  <a routerLink="/clientes">Clientes</a>
-  <a routerLink="/cotacoes">Cotações</a>
-  <a routerLink="/entregas">Entregas</a>
-</nav>
+  <div class="form-card">
 
-    <button (click)="sair()">Sair</button>
-  </aside>
+    <h2>Novo Cliente</h2>
 
-  <main class="clientes-page">
+    <div class="form-grid">
 
-    <div class="topbar">
-      <h1>Clientes</h1>
-      <p>Gerencie os clientes cadastrados no HubOps.</p>
-    </div>
+      <input
+        type="text"
+        placeholder="Nome"
+        [(ngModel)]="novoCliente.nome"
+      />
 
-    <div class="form-card">
+      <input
+        type="email"
+        placeholder="E-mail"
+        [(ngModel)]="novoCliente.email"
+      />
 
-      <h2>Novo Cliente</h2>
-
-      <div class="form-grid">
-
-        <input
-          type="text"
-          placeholder="Nome"
-          [(ngModel)]="novoCliente.nome"
-        />
-
-        <input
-          type="email"
-          placeholder="E-mail"
-          [(ngModel)]="novoCliente.email"
-        />
-
-        <input
-          type="text"
-          placeholder="Documento"
-          [(ngModel)]="novoCliente.documento"
-        />
-
-      </div>
-
-      <button (click)="cadastrarCliente()">
-        Cadastrar Cliente
-      </button>
+      <input
+        type="text"
+        placeholder="Documento"
+        [(ngModel)]="novoCliente.documento"
+      />
 
     </div>
 
-    <div class="clientes-grid">
+    <button (click)="cadastrarCliente()">
+      Cadastrar Cliente
+    </button>
 
-      <div class="cliente-card" *ngFor="let cliente of clientes">
-        <strong>{{ cliente.nome }}</strong>
-        <span>{{ cliente.email }}</span>
-        <small>Documento: {{ cliente.documento }}</small>
-      </div>
+  </div>
 
+  <p *ngIf="carregando()">Carregando clientes...</p>
+
+  <p *ngIf="erro()">
+    {{ erro() }}
+  </p>
+
+  <div class="clientes-grid" *ngIf="!carregando() && !erro()">
+
+    <div class="cliente-card" *ngFor="let cliente of clientes()">
+      <strong>{{ cliente.nome }}</strong>
+      <span>{{ cliente.email }}</span>
+      <small>Documento: {{ cliente.documento }}</small>
     </div>
 
-  </main>
+  </div>
 
-</div>
+</section>

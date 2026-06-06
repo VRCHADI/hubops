@@ -1,21 +1,93 @@
-<div class="page-layout">
+<section class="cotacoes-page">
 
-  <aside class="sidebar">
-    <h2>HubOps</h2>
-
-    <nav>
-      <a routerLink="/dashboard">Dashboard</a>
-      <a routerLink="/clientes">Clientes</a>
-      <a routerLink="/cotacoes">Cotações</a>
-      <a routerLink="/entregas">Entregas</a>
-    </nav>
-
-    <button (click)="sair()">Sair</button>
-  </aside>
-
-  <main class="page-content">
+  <div class="topbar">
     <h1>Cotações</h1>
     <p>Gerencie as cotações de frete do HubOps.</p>
-  </main>
+  </div>
 
-</div>
+  <div class="success-alert" *ngIf="sucesso()">
+    <div class="success-icon"></div>
+    <span>{{ sucesso() }}</span>
+  </div>
+
+  <div class="form-card">
+    <h2>Buscar Cotações</h2>
+
+    <div class="form-grid">
+      <input
+        type="number"
+        placeholder="ID do Cliente"
+        [(ngModel)]="clienteId"
+      />
+    </div>
+
+    <button (click)="carregarCotacoes()">
+      Buscar Cotações
+    </button>
+  </div>
+
+  <div class="form-card">
+    <h2>Nova Cotação</h2>
+
+    <div class="form-grid">
+      <input
+        type="number"
+        placeholder="ID do Cliente"
+        [(ngModel)]="clienteId"
+      />
+
+      <input
+        type="text"
+        placeholder="CEP Origem"
+        [(ngModel)]="novaCotacao.cepOrigem"
+      />
+
+      <input
+        type="text"
+        placeholder="CEP Destino"
+        [(ngModel)]="novaCotacao.cepDestino"
+      />
+
+      <input
+        type="number"
+        placeholder="Peso em KG"
+        [(ngModel)]="novaCotacao.pesoKg"
+      />
+    </div>
+
+    <button (click)="gerarCotacao()">
+      Gerar Cotação
+    </button>
+  </div>
+
+  <p *ngIf="carregando()">Carregando cotações...</p>
+
+  <p *ngIf="erro()">
+    {{ erro() }}
+  </p>
+
+  <div class="cotacoes-grid" *ngIf="!carregando() && !erro()">
+
+    <div class="cotacao-card" *ngFor="let cotacao of cotacoes()">
+      <strong>Cotação #{{ cotacao.id }}</strong>
+
+      <span>Status: {{ cotacao.status }}</span>
+
+      <small>Origem: {{ cotacao.cepOrigem }}</small>
+      <small>Destino: {{ cotacao.cepDestino }}</small>
+      <small>Peso: {{ cotacao.pesoKg }} kg</small>
+      <small>Valor: R$ {{ cotacao.valorFrete }}</small>
+      <small>Prazo: {{ cotacao.prazoDias }} dias</small>
+
+      <button
+        class="danger-button"
+        *ngIf="cotacao.status !== 'CANCELADA'"
+        (click)="cancelarCotacao(cotacao.id)"
+      >
+        Cancelar
+      </button>
+    </div>
+
+  </div>
+
+</section>
