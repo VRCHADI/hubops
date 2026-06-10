@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public record EntregaEvento(
         Long entregaId,
         String codigoRastreamento,
+        StatusEntrega statusAnterior,
         StatusEntrega status,
         Long cotacaoId,
         Long clienteId,

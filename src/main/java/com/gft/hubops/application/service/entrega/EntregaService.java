@@ -1,9 +1,14 @@
 package com.gft.hubops.application.service.entrega;
 
+import com.gft.hubops.adapters.in.web.entrega.dto.AtualizarStatusEntregaRequest;
+import com.gft.hubops.adapters.in.web.entrega.dto.EntregaPorStatusResponse;
 import com.gft.hubops.adapters.in.web.entrega.dto.EntregaRequest;
 import com.gft.hubops.adapters.in.web.entrega.dto.EntregaResponse;
+import com.gft.hubops.adapters.out.messaging.kafka.EntregaKafkaProducer;
+import com.gft.hubops.adapters.out.messaging.kafka.dto.EntregaEvento;
 import com.gft.hubops.adapters.out.persistence.cliente.ClienteRepository;
 import com.gft.hubops.adapters.out.persistence.cotacao.CotacaoRepository;
+import com.gft.hubops.adapters.out.persistence.entrega.EntregaJdbcRepository;
 import com.gft.hubops.adapters.out.persistence.entrega.EntregaRepository;
 import com.gft.hubops.domain.exception.RecursoNaoEncontradoException;
 import com.gft.hubops.domain.model.cliente.Cliente;
@@ -11,19 +16,14 @@ import com.gft.hubops.domain.model.cotacao.Cotacao;
 import com.gft.hubops.domain.model.entrega.Entrega;
 import com.gft.hubops.domain.model.entrega.StatusEntrega;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import com.gft.hubops.adapters.in.web.entrega.dto.AtualizarStatusEntregaRequest;
-import java.util.List;
-import java.time.LocalDateTime;
-import java.util.UUID;
-import com.gft.hubops.adapters.out.messaging.kafka.EntregaKafkaProducer;
-import com.gft.hubops.adapters.out.messaging.kafka.dto.EntregaEvento;
-import com.gft.hubops.adapters.in.web.entrega.dto.EntregaPorStatusResponse;
-import com.gft.hubops.adapters.out.persistence.entrega.EntregaJdbcRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -74,6 +74,7 @@ public class EntregaService {
         entregaKafkaProducer.publicar(new EntregaEvento(
                 entregaSalva.getId(),
                 entregaSalva.getCodigoRastreamento(),
+                null,
                 entregaSalva.getStatus(),
                 entregaSalva.getCotacao().getId(),
                 entregaSalva.getCliente().getId(),
@@ -81,18 +82,7 @@ public class EntregaService {
                 LocalDateTime.now()
         ));
 
-        return new EntregaResponse(
-                entregaSalva.getId(),
-                entregaSalva.getCodigoRastreamento(),
-                entregaSalva.getStatus(),
-                entregaSalva.getCriadaEm(),
-                entregaSalva.getCotacao().getId(),
-                entregaSalva.getCliente().getId()
-        );
-    }
-
-    private String gerarCodigoRastreamento() {
-        return "HUB-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        return montarResponse(entregaSalva);
     }
 
     @CacheEvict(value = "relatorioEntregasPorStatus", allEntries = true)
@@ -138,6 +128,7 @@ public class EntregaService {
         entregaKafkaProducer.publicar(new EntregaEvento(
                 entregaAtualizada.getId(),
                 entregaAtualizada.getCodigoRastreamento(),
+                statusAnterior,
                 entregaAtualizada.getStatus(),
                 entregaAtualizada.getCotacao().getId(),
                 entregaAtualizada.getCliente().getId(),
@@ -145,14 +136,7 @@ public class EntregaService {
                 LocalDateTime.now()
         ));
 
-        return new EntregaResponse(
-                entregaAtualizada.getId(),
-                entregaAtualizada.getCodigoRastreamento(),
-                entregaAtualizada.getStatus(),
-                entregaAtualizada.getCriadaEm(),
-                entregaAtualizada.getCotacao().getId(),
-                entregaAtualizada.getCliente().getId()
-        );
+        return montarResponse(entregaAtualizada);
     }
 
     public List<EntregaResponse> listarPorCliente(Long clienteId) {
@@ -163,14 +147,7 @@ public class EntregaService {
 
         return entregaRepository.findByClienteId(clienteId)
                 .stream()
-                .map(entrega -> new EntregaResponse(
-                        entrega.getId(),
-                        entrega.getCodigoRastreamento(),
-                        entrega.getStatus(),
-                        entrega.getCriadaEm(),
-                        entrega.getCotacao().getId(),
-                        entrega.getCliente().getId()
-                ))
+                .map(this::montarResponse)
                 .toList();
     }
 
@@ -187,14 +164,7 @@ public class EntregaService {
             throw new RecursoNaoEncontradoException("Entrega não encontrada para este cliente.");
         }
 
-        return new EntregaResponse(
-                entrega.getId(),
-                entrega.getCodigoRastreamento(),
-                entrega.getStatus(),
-                entrega.getCriadaEm(),
-                entrega.getCotacao().getId(),
-                entrega.getCliente().getId()
-        );
+        return montarResponse(entrega);
     }
 
     @CacheEvict(value = "relatorioEntregasPorStatus", allEntries = true)
@@ -219,21 +189,25 @@ public class EntregaService {
             throw new RuntimeException("Entrega já está cancelada.");
         }
 
+        StatusEntrega statusAnterior = entrega.getStatus();
+
         entrega.setStatus(StatusEntrega.CANCELADA);
 
         Entrega entregaCancelada = entregaRepository.save(entrega);
 
         log.info(
-                "Entrega cancelada | entregaId={} | clienteId={} | cotacaoId={} | status={}",
+                "Entrega cancelada | entregaId={} | clienteId={} | cotacaoId={} | statusAnterior={} | statusNovo={}",
                 entregaCancelada.getId(),
                 entregaCancelada.getCliente().getId(),
                 entregaCancelada.getCotacao().getId(),
+                statusAnterior,
                 entregaCancelada.getStatus()
         );
 
         entregaKafkaProducer.publicar(new EntregaEvento(
                 entregaCancelada.getId(),
                 entregaCancelada.getCodigoRastreamento(),
+                statusAnterior,
                 entregaCancelada.getStatus(),
                 entregaCancelada.getCotacao().getId(),
                 entregaCancelada.getCliente().getId(),
@@ -241,18 +215,26 @@ public class EntregaService {
                 LocalDateTime.now()
         ));
 
-        return new EntregaResponse(
-                entregaCancelada.getId(),
-                entregaCancelada.getCodigoRastreamento(),
-                entregaCancelada.getStatus(),
-                entregaCancelada.getCriadaEm(),
-                entregaCancelada.getCotacao().getId(),
-                entregaCancelada.getCliente().getId()
-        );
+        return montarResponse(entregaCancelada);
     }
 
     @Cacheable("relatorioEntregasPorStatus")
     public List<EntregaPorStatusResponse> contarEntregasPorStatus() {
         return entregaJdbcRepository.contarEntregasPorStatus();
+    }
+
+    private String gerarCodigoRastreamento() {
+        return "HUB-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
+    private EntregaResponse montarResponse(Entrega entrega) {
+        return new EntregaResponse(
+                entrega.getId(),
+                entrega.getCodigoRastreamento(),
+                entrega.getStatus(),
+                entrega.getCriadaEm(),
+                entrega.getCotacao().getId(),
+                entrega.getCliente().getId()
+        );
     }
 }
