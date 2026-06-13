@@ -13,6 +13,57 @@
   </aside>
 
   <main class="main-content">
-    <router-outlet></router-outlet>
+    <header class="topbar">
+      <div>
+        <span class="topbar-label">Operações Logísticas</span>
+        <h1>HubOps</h1>
+      </div>
+
+      <div class="notification-area">
+        <button class="notification-button" (click)="alternarNotificacoes()">
+          <span class="notification-icon">🔔</span>
+
+          @if (totalNaoLidas > 0) {
+            <span class="notification-badge">{{ totalNaoLidas }}</span>
+          }
+        </button>
+
+        @if (notificacoesAbertas) {
+          <div class="notification-dropdown">
+            <div class="notification-header">
+              <strong>Notificações</strong>
+              <span>{{ totalNaoLidas }} não lida(s)</span>
+            </div>
+
+            @if (carregandoNotificacoes) {
+              <p class="notification-empty">Carregando notificações...</p>
+            } @else if (notificacoes.length === 0) {
+              <p class="notification-empty">Nenhuma notificação encontrada.</p>
+            } @else {
+              <div class="notification-list">
+                @for (notificacao of notificacoes; track notificacao.id) {
+                  <button
+                    class="notification-item"
+                    [class.unread]="!notificacao.lida"
+                    (click)="marcarComoLida(notificacao)"
+                  >
+                    <div class="notification-item-header">
+                      <strong>{{ notificacao.titulo }}</strong>
+                      <span>{{ formatarData(notificacao.criadaEm) }}</span>
+                    </div>
+
+                    <p>{{ notificacao.mensagem }}</p>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </header>
+
+    <section class="page-content">
+      <router-outlet></router-outlet>
+    </section>
   </main>
 </div>
